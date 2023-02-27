@@ -10,6 +10,7 @@ app.use(express.json());
 // DB_USER=jkrBookShop
 // DB_PASS=eqWC50TP9rkUxKUB
 
+
 // -----> mongodb uri
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.iea9q.mongodb.net/?retryWrites=true&w=majority`
 
