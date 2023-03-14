@@ -7,6 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// vercel domain: https://espresso-emporium-server.vercel.app
+
 // DB_USER=jkrBookShop
 // DB_PASS=eqWC50TP9rkUxKUB
 
@@ -22,32 +24,32 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
   try {
-    const booksCollection = client.db("jkrBookShop").collection("books");
+    const coffeeCollection = client.db("espressoEmporium").collection("coffee");
 
-    // add a book
-    app.post("/book", async (req, res) => {
-      const service = req.body;
-      const result = await booksCollection.insertOne(service);
+    // add a coffee
+    app.post("/coffee", async (req, res) => {
+      const data = req.body;
+      const result = await coffeeCollection.insertOne(data);
       res.send(result);
     });
 
-    // view all books
-    app.get("/books", async (req, res) => {
+    // view all coffee
+    app.get("/coffee", async (req, res) => {
       const query = {};
-      const cursor = booksCollection.find(query);
+      const cursor = coffeeCollection.find(query);
       const data = await cursor.toArray();
       res.send(data);
     });
 
-    //view single book detail
-    app.get("/singleBook/:id", async (req, res) => {
+    //view single coffee detail
+    app.get("/coffee/:id", async (req, res) => {
       const query = { _id: ObjectId(req.params.id) };
-      const data = await booksCollection.findOne(query);
+      const data = await coffeeCollection.findOne(query);
       res.send(data);
     });
 
-    //update single book
-    app.put('/updateBook/:id', async (req, res) => {
+    //update single coffee
+    app.put('/coffee/:id', async (req, res) => {
       const id = req.params.id;
       const data = req.body;
       console.log(data)
@@ -55,24 +57,24 @@ async function run() {
       const options = { upsert: true };
       const updateDoc = {
         $set: {
-          ... (data.title && { title: data.title }),
-          ... (data.author && { author: data.author }),
-          ... (data.publisher && { publisher: data.publisher }),
-          ... (data.language && { language: data.language }),
+          ... (data.name && { name: data.name }),
+          ... (data.chef && { chef: data.chef }),
+          ... (data.supplier && { supplier: data.supplier }),
+          ... (data.taste && { taste: data.taste }),
           ... (data.category && { category: data.category }),
-          ... (data.subject && { subject: data.subject }),
+          ... (data.details && { details: data.details }),
           ... (data.image && { image: data.image })
         }
       }
-      const result = await booksCollection.updateOne(query, updateDoc, options);
+      const result = await coffeeCollection.updateOne(query, updateDoc, options);
       res.json(result)
     })
 
-    // Delete a single book
-    app.delete("/book/:id", async (req, res) => {
+    // Delete a single coffee
+    app.delete("/coffee/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const result = await booksCollection.deleteOne(query);
+      const result = await coffeeCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
@@ -83,7 +85,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Welcome to JKR Bookshop");
+  res.send("Welcome to Espresso Emporium");
 });
 
 app.listen(port, () => {
